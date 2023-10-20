@@ -1,6 +1,6 @@
 package com.ticketbooking.onlineticket.dto;
 
-import jakarta.annotation.Nullable;
+
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 

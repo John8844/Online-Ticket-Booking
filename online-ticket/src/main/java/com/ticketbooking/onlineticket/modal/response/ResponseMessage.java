@@ -1,6 +1,5 @@
 package com.ticketbooking.onlineticket.modal.response;
 
-import org.springframework.http.HttpStatusCode;
 
 public class ResponseMessage {
     private int statusCode;

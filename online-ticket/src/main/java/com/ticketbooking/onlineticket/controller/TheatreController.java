@@ -3,22 +3,25 @@ package com.ticketbooking.onlineticket.controller;
 
 import com.ticketbooking.onlineticket.dto.TheatreRequest;
 import com.ticketbooking.onlineticket.exception.ValidationException;
+import com.ticketbooking.onlineticket.modal.Theatre;
 import com.ticketbooking.onlineticket.modal.response.ResponseMessage;
 import com.ticketbooking.onlineticket.modal.response.ResponseStatus;
 import com.ticketbooking.onlineticket.service.TheatreService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/theatre")
 public class TheatreController {
+
+    @Autowired
     private TheatreService theatreService;
 
     private static final Logger logger = LoggerFactory.getLogger(TheatreController.class);
@@ -37,6 +40,31 @@ public class TheatreController {
             return new ResponseEntity<>(new ResponseMessage(403,ResponseStatus.Failure,e.getExceptionMessage()),HttpStatus.FORBIDDEN);
         }catch (Exception e){
             return new ResponseEntity<>(new ResponseMessage(500,ResponseStatus.Failure,"Internal Server Error"),HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getAllTheatres(){
+        try{
+            logger.info("{}: GET Request to get All Theatres");
+            List<Theatre> theatres = theatreService.getAllTheatres();
+            return new ResponseEntity<>(theatres,HttpStatus.OK);
+        }catch (ValidationException e){
+            return new ResponseEntity<>(new ResponseMessage(403,ResponseStatus.Failure,e.getExceptionMessage()),HttpStatus.FORBIDDEN);
+        }catch (Exception e){
+            return new ResponseEntity<>(new ResponseMessage(500,ResponseStatus.Failure,"Internal Server Error"),HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("{location}")
+    public ResponseEntity<?> getTheatreByLocation(@PathVariable("location") String location){
+        try{
+            logger.info("{}: GET Request to get Theatre by Location, Theatre: {}");
+            Theatre theatre=theatreService.getTheatreByLocation(location);
+            return new ResponseEntity<>(theatre,HttpStatus.OK);
+        }catch(ValidationException e){
+            String errorMessage=e.getExceptionMessage();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
         }
     }
 
