@@ -48,7 +48,41 @@ public class TheatreServiceImpl implements TheatreService {
         return theatre;
     }
 
+    @Override
+    public Theatre updateTheatre(Theatre theatre, String name) throws ValidationException {
+        Theatre theatreInDB = findByName(name);
+        logger.info("{}: Function start: TheatreServiceImpl.updateTheatre()");
+        if (theatreInDB==null)throw new ValidationException("Can't Update. Because, Theatre doesn't exist.");
+        Theatre oldTheatre = theatreInDB;
+
+        oldTheatre.setName(theatre.getName());
+        oldTheatre.setLocation(theatre.getLocation());
+        oldTheatre.setSeats(theatre.getSeats());
+
+        theatreRepository.save(oldTheatre);
+        logger.info("{}: Function end: TheatreServiceImpl.updateTheatre()");
+        return oldTheatre;
+    }
+
+    @Override
+    public void deleteTheatre(int id) throws ValidationException {
+        Theatre theatreInDB = findById(id);
+        logger.info("{}: Function start: TheatreServiceImpl.deleteTheatre()");
+        if (theatreInDB==null) throw new ValidationException("Can't Update. Because, Theatre doesn't exist.");
+        theatreRepository.deleteById(id);
+        logger.info("{}: Function end: TheatreServiceImpl.deleteTheatre()");
+    }
+
     public Theatre findByLocation(String location){
         return theatreRepository.findTheatreByLocation(location);
+    }
+    public Theatre findByName(String name){
+        return theatreRepository.findByName(name);
+    }
+    public Theatre findById(int id){
+        return theatreRepository.findById(id);
+    }
+    public Theatre deleteByName(String name){
+        return theatreRepository.deleteTheatreByName(name);
     }
 }

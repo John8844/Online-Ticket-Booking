@@ -13,4 +13,8 @@ public interface TheatreService {
 
     Theatre getTheatreByLocation(String location)throws ValidationException;
 
+    Theatre updateTheatre(Theatre theatre,String name)throws ValidationException;
+
+    void deleteTheatre(int id)throws ValidationException;
+
 }

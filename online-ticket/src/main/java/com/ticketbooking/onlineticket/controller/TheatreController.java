@@ -68,4 +68,28 @@ public class TheatreController {
         }
     }
 
+    @PutMapping("{name}")
+    public ResponseEntity<?> updateTheatre(@PathVariable("name") String name,@RequestBody Theatre theatre){
+        try{
+            logger.info("{}: PUT Request to update Theatre Details, Theatre: {}");
+            Theatre updatedTheatre = theatreService.updateTheatre(theatre,name);
+            return new ResponseEntity<>(updatedTheatre,HttpStatus.OK);
+        }catch(ValidationException e){
+            String errorMessage=e.getExceptionMessage();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
+        }
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<String> deleteTheatre(@PathVariable("id") int id){
+        try{
+            logger.info("{}: DELETE Request to delete Theatre Details, Theatre: {}");
+            theatreService.deleteTheatre(id);
+            return new ResponseEntity<>("Theatre deleted successfully...",HttpStatus.OK);
+        }catch(ValidationException e){
+            String errorMessage=e.getExceptionMessage();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
+        }
+    }
+
 }
