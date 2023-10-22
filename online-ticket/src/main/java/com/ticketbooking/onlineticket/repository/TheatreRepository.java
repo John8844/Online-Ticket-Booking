@@ -10,5 +10,4 @@ public interface TheatreRepository extends JpaRepository<Theatre,Integer> {
 
     Theatre findById(int id);
 
-    Theatre deleteTheatreByName(String name);
 }

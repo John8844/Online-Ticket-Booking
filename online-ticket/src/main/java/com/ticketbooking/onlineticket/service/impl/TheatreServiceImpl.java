@@ -8,7 +8,6 @@ import com.ticketbooking.onlineticket.service.TheatreService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.config.ConfigDataResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,54 +22,58 @@ public class TheatreServiceImpl implements TheatreService {
 
     @Override
     public Theatre saveTheatre(TheatreRequest theatreRequest) throws ValidationException {
-        logger.info("{}: Function start: TheatreServiceImpl.saveTheatre()");
-        Theatre theatre=new Theatre(theatreRequest.getName(),theatreRequest.getLocation(),theatreRequest.getSeats());
+        Theatre theatreInDB = findByName(theatreRequest.getName());
+        logger.info("{}: Function start: TheatreServiceImpl.saveTheatre()",theatreRequest.getName());
+        if (theatreInDB!=null)throw new ValidationException("Theatre already exist");
+        if (theatreRequest.getSeats()<10) throw new ValidationException("Total seats is too low.");
+        Theatre theatre=new Theatre(theatreRequest.getName(),theatreRequest.getLocation(),theatreRequest.getSeats(),theatreRequest.getMovieName());
         Theatre newtheatre = theatreRepository.save(theatre);
-        logger.info("{}: Function end: TheatreServiceImpl.saveTheatre()");
+        logger.info("{}: Function end: TheatreServiceImpl.saveTheatre()",theatreRequest.getName());
         return newtheatre;
     }
 
     @Override
     public List<Theatre> getAllTheatres() throws ValidationException {
-        logger.info("{}: Function start: TheatreServiceImpl.getAllTheatres()");
+        logger.info(" Function start: TheatreServiceImpl.getAllTheatres()");
         List<Theatre> theatres=theatreRepository.findAll();
-        logger.info("{}: Function end: TheatreServiceImpl.getAllTheatres()");
+        logger.info(" Function end: TheatreServiceImpl.getAllTheatres()");
         return theatres;
     }
 
     @Override
     public Theatre getTheatreByLocation(String location) throws ValidationException {
         Theatre theatreInDB = findByLocation(location);
-        logger.info("{}: Function start: TheatreServiceImpl.getTheatreByLocation()");
+        logger.info("{}: Function start: TheatreServiceImpl.getTheatreByLocation()",location);
         if (theatreInDB==null)throw new ValidationException("Theatre doesn't exist.");
         Theatre theatre= theatreRepository.findTheatreByLocation(location);
-        logger.info("{}: Function end: TheatreServiceImpl.getTheatreByLocation()");
+        logger.info("{}: Function end: TheatreServiceImpl.getTheatreByLocation()",location);
         return theatre;
     }
 
     @Override
     public Theatre updateTheatre(Theatre theatre, String name) throws ValidationException {
         Theatre theatreInDB = findByName(name);
-        logger.info("{}: Function start: TheatreServiceImpl.updateTheatre()");
+        logger.info("{}: Function start: TheatreServiceImpl.updateTheatre()",theatre.getName());
         if (theatreInDB==null)throw new ValidationException("Can't Update. Because, Theatre doesn't exist.");
         Theatre oldTheatre = theatreInDB;
 
         oldTheatre.setName(theatre.getName());
         oldTheatre.setLocation(theatre.getLocation());
         oldTheatre.setSeats(theatre.getSeats());
+        oldTheatre.setMovieName(theatre.getMovieName());
 
         theatreRepository.save(oldTheatre);
-        logger.info("{}: Function end: TheatreServiceImpl.updateTheatre()");
+        logger.info("{}: Function end: TheatreServiceImpl.updateTheatre()",theatre.getName());
         return oldTheatre;
     }
 
     @Override
     public void deleteTheatre(int id) throws ValidationException {
         Theatre theatreInDB = findById(id);
-        logger.info("{}: Function start: TheatreServiceImpl.deleteTheatre()");
-        if (theatreInDB==null) throw new ValidationException("Can't Update. Because, Theatre doesn't exist.");
+        logger.info("{}: Function start: TheatreServiceImpl.deleteTheatre()",id);
+        if (theatreInDB==null) throw new ValidationException("Can't Delete. Because, Theatre doesn't exist.");
         theatreRepository.deleteById(id);
-        logger.info("{}: Function end: TheatreServiceImpl.deleteTheatre()");
+        logger.info("{}: Function end: TheatreServiceImpl.deleteTheatre()",id);
     }
 
     public Theatre findByLocation(String location){
@@ -82,7 +85,5 @@ public class TheatreServiceImpl implements TheatreService {
     public Theatre findById(int id){
         return theatreRepository.findById(id);
     }
-    public Theatre deleteByName(String name){
-        return theatreRepository.deleteTheatreByName(name);
-    }
+
 }

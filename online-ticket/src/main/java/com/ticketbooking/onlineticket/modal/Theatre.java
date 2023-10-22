@@ -1,9 +1,11 @@
 package com.ticketbooking.onlineticket.modal;
 
 import jakarta.persistence.*;
+import org.springframework.stereotype.Component;
 
 @Entity
 @Table(name = "theatres")
+@Component
 public class Theatre {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,13 +20,17 @@ public class Theatre {
     @Column(name = "seats",nullable = false)
     private int seats;
 
+    @Column(name = "movie",nullable = false)
+    private String movieName;
+
     public Theatre() {
     }
 
-    public Theatre(String name, String location, int seats) {
+    public Theatre(String name, String location, int seats,String movieName) {
         this.name = name;
         this.location = location;
         this.seats = seats;
+        this.movieName=movieName;
     }
 
     public int getId() {
@@ -57,5 +63,13 @@ public class Theatre {
 
     public void setSeats(int seats) {
         this.seats = seats;
+    }
+
+    public String getMovieName() {
+        return movieName;
+    }
+
+    public void setMovieName(String movieName) {
+        this.movieName = movieName;
     }
 }

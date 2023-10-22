@@ -16,4 +16,7 @@ public class TheatreRequest {
 
     @NotNull(message = "Seats shouldn't be Null.")
     private  int seats;
+
+    @NotNull(message = "Movie Name shouldn't be Null.")
+    private  String movieName;
 }
